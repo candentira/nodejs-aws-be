@@ -4,7 +4,7 @@ let productList
 
 export default async (event, _context) => {
   if (!productList) {
-    productList = await import('./productList.json').then(list => productList = list.default )
+    productList = await import('./productList.json').then(list => list.default )
   }
   return {
     headers: {

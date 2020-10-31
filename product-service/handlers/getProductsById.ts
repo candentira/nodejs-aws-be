@@ -5,7 +5,7 @@ let productList
 export default async (event, _context) => {
   const { id } = event.pathParameters
   if (!productList) {
-    productList = await import('./productList.json').then(list => productList = list )
+    productList = await import('./productList.json').then(list => list.default )
   }
   const products = productList.filter(product => product.id === id)
   return {
