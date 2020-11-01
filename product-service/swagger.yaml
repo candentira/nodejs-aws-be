@@ -25,7 +25,7 @@ paths:
               $ref: "#/definitions/Product"
       security:
       - api_key: []
-  /products/{productId}:
+  /products/{id}:
     get:
       tags:
       - "products"
@@ -35,12 +35,12 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "productId"
+      - name: "id"
         in: "path"
         description: "ID of products to return"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
+        format: "uuid"
       responses:
         "200":
           description: "successful operation"

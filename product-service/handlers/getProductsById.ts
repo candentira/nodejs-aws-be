@@ -1,4 +1,4 @@
-import 'source-map-support/register';
+import 'source-map-support/register'
 import productList from './productList.json'
 import { PRODUCT_ERRORS } from './productConsts'
 
@@ -15,7 +15,7 @@ import { PRODUCT_ERRORS } from './productConsts'
 // }
 // const getProducts = productGetter()
 
-export default async (event, _context) => {
+export default async event => {
   const responseHeaders = { headers: { 'Access-Control-Allow-Origin': '*' } }
   try {
     // const productList = await getProducts()

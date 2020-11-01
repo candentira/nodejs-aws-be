@@ -1,4 +1,4 @@
-import 'source-map-support/register';
+import 'source-map-support/register'
 import productList from './productList.json'
 
 // Lazy loading only to show that async await would be used in this lambda
@@ -13,7 +13,7 @@ import productList from './productList.json'
 // }
 // const getProducts = productGetter()
 
-export default async (event, _context) => {
+export default async event => {
   //const productList = await getProducts()
   return {
     headers: {
