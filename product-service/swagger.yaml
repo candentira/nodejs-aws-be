@@ -47,9 +47,11 @@ paths:
           schema:
             $ref: "#/definitions/Product"
         "400":
-          description: "Invalid ID supplied"
+          description: "Invalid ID provided"
         "404":
           description: "Product not found"
+        "500":
+          description: "Something went wrong"
       security:
       - api_key: []
 securityDefinitions:
@@ -74,8 +76,8 @@ definitions:
       description:
         type: "string"
       id:
-        type: "integer"
-        format: "int64"
+        type: "string"
+        format: "uuid"
       price:
         type: "integer"
         format: "int64"
