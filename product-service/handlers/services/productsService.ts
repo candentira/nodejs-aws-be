@@ -34,12 +34,15 @@ export const createProducts = async ({ title, description, price, count }) => {
   await client.connect();
 
   try {
-    const { rows } = await client.query(`INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`, [title, description, price]) ;
-    const productId = rows[0].id;
-    await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [productId, count]);
+    await client.query('BEGIN');
+    const result = await client.query(`INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`, [title, description, price]) ;
+    await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [result.rows[0].id, count]);
+    await client.query('COMMIT');
   } catch (err) {
       console.error('Error during database request executing:', err);
+      await client.query('ROLLBACK');
+      throw err;
   } finally {
-      client.end(); // manual closing of connection
+      client.end()
   }
 }
