@@ -28,3 +28,18 @@ export const getProductsList = async () => {
       client.end(); // manual closing of connection
   }
 }
+
+export const createProducts = async ({ title, description, price, count }) => {
+  const client = new Client(dbOptions);
+  await client.connect();
+
+  try {
+    const { rows } = await client.query(`INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`, [title, description, price]) ;
+    const productId = rows[0].id;
+    await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [productId, count]);
+  } catch (err) {
+      console.error('Error during database request executing:', err);
+  } finally {
+      client.end(); // manual closing of connection
+  }
+}

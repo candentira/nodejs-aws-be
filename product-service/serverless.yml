@@ -49,3 +49,10 @@ functions:
             parameters:
               paths:
                 id: true
+  createProducts:
+    handler: handler.createProducts
+    events:
+      - http:
+          method: post
+          path: products/
+          cors: true
