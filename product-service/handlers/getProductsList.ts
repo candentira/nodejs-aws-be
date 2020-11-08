@@ -1,20 +1,8 @@
 import 'source-map-support/register'
-import productList from './productList.json'
-
-// Lazy loading only to show that async await would be used in this lambda
-// const productGetter = () => {
-//   let products
-//   return async () => {
-//     if (!products) {
-//       products = await import('./productList.json').then(list => list.default )
-//     }
-//     return products
-//   }
-// }
-// const getProducts = productGetter()
+import { getProductsList } from './services/productsService'
 
 export default async event => {
-  //const productList = await getProducts()
+  let productList = await getProductsList()
   return {
     headers: {
       'Access-Control-Allow-Origin': '*',
