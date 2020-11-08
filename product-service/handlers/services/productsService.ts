@@ -17,8 +17,8 @@ export const getProductsList = async () => {
   const client = new Client(dbOptions);
   await client.connect();
   try {
-    const { rows: products } = await client.query(`select id, title, description, price, count from products p INNER JOIN stocks s on p.id = s.product_id`);
-    console.log(products);
+    const queryStr = `select id, title, description, price, count from products p INNER JOIN stocks s on p.id = s.product_id`
+    const { rows: products } = await client.query(queryStr);
     return products;
   } catch (err) {
       // you can process error here. In this example just log it to console.
@@ -29,13 +29,27 @@ export const getProductsList = async () => {
   }
 }
 
+export const getProductsById = async id => {
+  const client = new Client(dbOptions);
+  await client.connect();
+  try {
+    const queryStr = `select id, title, description, price, count from products p INNER JOIN stocks s on p.id = s.product_id where p.id = $1`
+    const { rows: products } = await client.query(queryStr, [id]);
+    return products && products.length === 1 ? products[0] : products;
+  } catch (err) {
+      console.error('Error during database request executing:', err);
+  } finally {
+      client.end();
+  }
+}
+
 export const createProducts = async ({ title, description, price, count }) => {
   const client = new Client(dbOptions);
   await client.connect();
-
   try {
     await client.query('BEGIN');
-    const result = await client.query(`INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`, [title, description, price]) ;
+    const createProductQuery = `INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`
+    const result = await client.query(createProductQuery, [title, description, price]) ;
     await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [result.rows[0].id, count]);
     await client.query('COMMIT');
   } catch (err) {

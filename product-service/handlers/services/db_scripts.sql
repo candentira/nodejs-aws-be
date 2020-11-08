@@ -1,3 +1,5 @@
+-- THIS FILE COULD BE REMOVED, stored only for visibility of work done
+
 --create table products (
 --	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 --	title text not NULL,
