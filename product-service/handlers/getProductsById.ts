@@ -16,6 +16,10 @@ import { PRODUCT_ERRORS } from './productConsts'
 // const getProducts = productGetter()
 
 export default async event => {
+  console.log("getProductsById Lambda started execution");
+  console.info("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2));
+  console.log("EVENT\n" + JSON.stringify(event, null, 2));
+
   const responseHeaders = { headers: { 'Access-Control-Allow-Origin': '*' } }
   try {
     // const productList = await getProducts()
@@ -27,6 +31,9 @@ export default async event => {
       };
     }
     const product = productList.find(product => product.id === id)
+
+    console.info("getProductsById Lambda finished execution successfully");
+    
     if (!product) {
       return { ...responseHeaders,
         statusCode: 404,
@@ -37,8 +44,10 @@ export default async event => {
       statusCode: 200,
       body: JSON.stringify(product),
     }
-  } catch(err) {
+  } catch(err) {    
+    console.error("getProductsById Lambda failed during execution");
     console.error(err)    
+    
     return { ...responseHeaders,
       statusCode: 500,
       body: JSON.stringify(PRODUCT_ERRORS.SERVER_ISSUE),
