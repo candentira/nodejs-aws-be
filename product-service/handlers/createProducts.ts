@@ -4,8 +4,7 @@ import { PRODUCT_ERRORS } from './productConsts'
 
 const isValidRequest = ({ title, description, price, count }) => {
     return title && description && price && count &&
-        typeof price === 'number' && typeof count === 'number' &&
-        typeof title === 'string' && typeof description === 'string'
+        typeof price === 'number' && typeof title === 'string' && typeof description === 'string'
 }
 
 export default async event => {
@@ -26,13 +25,14 @@ export default async event => {
         }
     }
 
-    await createProducts({ title, description, price, count });
+    const newProduct = await createProducts({ title, description, price, count });
     
     console.info("createProducts Lambda finished execution successfully");
 
     return {
       ...responseHeaders,
-      statusCode: 200,
+      statusCode: 201,
+      body: JSON.stringify(newProduct)
     }
   } catch(err) {
     console.error("createProducts Lambda failed during execution");

@@ -50,8 +50,10 @@ export const createProducts = async ({ title, description, price, count }) => {
     await client.query('BEGIN');
     const createProductQuery = `INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id`
     const result = await client.query(createProductQuery, [title, description, price]) ;
-    await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [result.rows[0].id, count]);
+    const productId = result.rows[0].id;
+    await client.query(`INSERT INTO stocks (product_id, count) VALUES ($1, $2)`, [productId, count]);
     await client.query('COMMIT');
+    return await getProductsById(productId);
   } catch (err) {
       console.error('Error during database request executing:', err);
       await client.query('ROLLBACK');
