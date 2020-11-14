@@ -1,25 +1,31 @@
 import 'source-map-support/register'
-import productList from './productList.json'
-
-// Lazy loading only to show that async await would be used in this lambda
-// const productGetter = () => {
-//   let products
-//   return async () => {
-//     if (!products) {
-//       products = await import('./productList.json').then(list => list.default )
-//     }
-//     return products
-//   }
-// }
-// const getProducts = productGetter()
+import { getProductsList } from './services/productsService'
+import { PRODUCT_ERRORS } from './productConsts'
 
 export default async event => {
-  //const productList = await getProducts()
-  return {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
-    statusCode: 200,
-    body: JSON.stringify(productList),
+  console.log("getProducts Lambda started execution");
+  console.info("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2));
+  console.log("EVENT\n" + JSON.stringify(event, null, 2));
+
+  const responseHeaders = { headers: { 'Access-Control-Allow-Origin': '*' } };
+  try{
+    let productList = await getProductsList();
+
+    console.info("getProducts Lambda finished execution successfully");
+    
+    return {
+      ...responseHeaders,
+      statusCode: 200,
+      body: JSON.stringify(productList),
+    }
+  } catch(err) {
+    console.error("getProducts Lambda failed during execution");
+    console.error(err);
+    
+    return {
+      ...responseHeaders,
+      statusCode: 500,
+      body: JSON.stringify(PRODUCT_ERRORS.SERVER_ISSUE)
+    }
   }
 }
