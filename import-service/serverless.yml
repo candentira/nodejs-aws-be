@@ -47,3 +47,12 @@ functions:
             parameters:
               paths:
                 name: true
+  importFileParser:
+    handler: handler.importFileParser
+    events:
+      - s3:
+          bucket: hw5-product-files
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true 
