@@ -8,9 +8,10 @@ export default event => {
     const s3 = new AWS.S3({ region: 'eu-west-1'})
 
     event.Records.forEach(record => {
+        const objectKey = record.s3.object.key
         const s3Stream = s3.getObject({
             Bucket: BUCKET,
-            Key: record.s3.object.key
+            Key: objectKey
         }).createReadStream();
 
         s3Stream.pipe(csv())
@@ -19,6 +20,21 @@ export default event => {
             })
             .on('end', async () => {
                 console.log(`CSV file was parsed`)
+                console.log(`Copy from ${BUCKET}/${objectKey}`)
+
+                const newObjectKey = objectKey.replace('uploaded', 'parsed')
+                await s3.copyObject({
+                    Bucket: BUCKET,
+                    CopySource: `${BUCKET}/${objectKey}`,
+                    Key: newObjectKey
+                }).promise()
+
+                await s3.deleteObject({
+                    Bucket: BUCKET,
+                    Key: objectKey,
+                  }).promise();
+                
+                console.log(`Copied into ${BUCKET}/${newObjectKey}`)
             })
     })
     return {
