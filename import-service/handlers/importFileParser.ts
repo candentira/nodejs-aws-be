@@ -39,6 +39,6 @@ export default event => {
     })
     return {
         headers: { 'Access-Control-Allow-Origin': '*' },
-        statusCode: 200
+        statusCode: 202
     }
 }
