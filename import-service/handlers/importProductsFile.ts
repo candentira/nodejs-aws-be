@@ -12,7 +12,7 @@ export default event => {
         Bucket: BUCKET,
         Key: path,
         Expires: 60,
-        ContentType: 'application/vnd.ms-excel'
+        ContentType: 'text/csv'
     }
 
     return new Promise((resolve, reject) => {
