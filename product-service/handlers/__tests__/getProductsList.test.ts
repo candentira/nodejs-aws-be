@@ -1,15 +1,9 @@
 import getProductsList from '../getProductsList';
-import productList from '../productList.json';
 
 describe('getProductsList', () => {
     it('should return 200 status code', async () => {
         const result = await getProductsList({})
         expect(result.statusCode).toEqual(200);
-    });
-
-    it('should return productList', async () => {
-        const result = await getProductsList({})
-        expect(result.body).toEqual(`${JSON.stringify(productList)}`);
     });
 
     it('should return array with object with title ProductFirst at 0 position ', async () => {
