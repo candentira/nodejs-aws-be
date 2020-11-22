@@ -21,8 +21,11 @@ provider:
   region: eu-west-1
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    SQS_URL:
+      Ref: SQSQueue
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -34,6 +37,25 @@ provider:
         - "s3:*"
       Resource:
         - "arn:aws:s3:::hw5-product-files/*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+  Outputs:
+    SQSQueueUrl:
+      Value:
+        Ref: SQSQueue
+    SQSQueueArn:
+      Value:
+        Fn::GetAtt: [ SQSQueue, Arn ]
 
 functions:
   importProductsFile:

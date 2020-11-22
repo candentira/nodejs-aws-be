@@ -6,6 +6,7 @@ export default event => {
     console.log("importFileParser Lambda started execution");
 
     const s3 = new AWS.S3({ region: 'eu-west-1'})
+    const sqs = new AWS.SQS()
 
     event.Records.forEach(record => {
         const objectKey = record.s3.object.key
@@ -15,8 +16,18 @@ export default event => {
         }).createReadStream();
 
         s3Stream.pipe(csv())
-            .on('data', data => {
-                console.log(data)
+            .on('data', product => {
+                console.log(`Parsed product: ${JSON.stringify(product)}`)
+                sqs.sendMessage({
+                    QueueUrl: process.env.SQS_URL,
+                    MessageBody: JSON.stringify(product)
+                }, (error, data) => {
+                    if (error) {
+                        console.log(`Couldn't send product to SQS, error: ${error}`)
+                    } else {
+                        console.log(`Send message to SQS with product: ${JSON.stringify(data)}`)
+                    }
+                })
             })
             .on('end', async () => {
                 console.log(`CSV file was parsed`)

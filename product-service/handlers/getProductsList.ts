@@ -9,7 +9,7 @@ export default async event => {
 
   const responseHeaders = { headers: { 'Access-Control-Allow-Origin': '*' } };
   try{
-    let productList = await getProductsList();
+    const productList = await getProductsList();
 
     console.info("getProducts Lambda finished execution successfully");
     
