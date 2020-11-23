@@ -4,8 +4,14 @@ import { createProduct, getProductsByTitle, isValidProduct } from './services/pr
 const sendProductCreatedNotification = (sns, product) => {
     console.log('Sending product created notification to SNS Topic')
     sns.publish({
-        Subject: "NodeJS in AWS training: Product created",
+        Subject: `NodeJS in AWS training: Product ${product.title} was created`,
         Message: `NodeJS in AWS training: Product ${JSON.stringify(product)} was created in DB`,
+        MessageAttributes: {
+            productCount: {
+                DataType: 'Number',
+                StringValue: product.count.toString(),
+            },
+        },
         TopicArn: process.env.SNS_ARN 
     }, (error, data) => {        
         if (error) {

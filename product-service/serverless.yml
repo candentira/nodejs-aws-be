@@ -50,11 +50,23 @@ resources:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: createProductTopic
-    SNSSubscription:
+    SNSSubscriptionAllProducts:
       Type: AWS::SNS::Subscription
       Properties:
         Endpoint: candentira@gmail.com
         Protocol: email
+        TopicArn:
+          Ref: SNSTopic
+    SNSSubscriptionWholesale:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: vikich@yandex.ru
+        Protocol: email
+        FilterPolicy:
+          productCount:
+            - numeric:
+                - ">"
+                - 9
         TopicArn:
           Ref: SNSTopic
 
