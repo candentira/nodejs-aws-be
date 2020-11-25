@@ -27,7 +27,7 @@ export default async event => {
     console.log("EVENT\n" + JSON.stringify(event, null, 2));
 
     const sns = new SNS({ region: 'eu-west-1'})
-    return Promise.all(event.Records.map(async ({ body }) => {
+    return Promise.allSettled(event.Records.map(async ({ body }) => {
         console.log(`Start Product creation: ${JSON.stringify(body)}`)
         const { title, description, price, count } = JSON.parse(body)
         const productData = { title, description, price: +price, count: +count }
