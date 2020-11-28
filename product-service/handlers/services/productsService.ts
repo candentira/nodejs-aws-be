@@ -37,13 +37,32 @@ export const getProductsById = async id => {
     const { rows: products } = await client.query(queryStr, [id]);
     return products && products.length === 1 ? products[0] : products;
   } catch (err) {
-      console.error('Error during database request executing:', err);
+      console.error('Error during getProductsById database request:', err);
   } finally {
       client.end();
   }
 }
 
-export const createProducts = async ({ title, description, price, count }) => {
+export const getProductsByTitle = async title => {
+  const client = new Client(dbOptions);
+  await client.connect();
+  try {
+    const queryStr = `select id, title, description, price from products where products.title = $1`
+    const { rows: products } = await client.query(queryStr, [title]);
+    return products;
+  } catch (err) {
+      console.error('Error during getProductsByTitle database request:', err);
+  } finally {
+      client.end();
+  }
+}
+
+export const isValidProduct = ({ title, description, price, count }) => {
+  return title && description && price && count &&
+      typeof price === 'number' && typeof title === 'string' && typeof description === 'string'
+}
+
+export const createProduct = async ({ title, description, price, count }) => {
   const client = new Client(dbOptions);
   await client.connect();
   try {

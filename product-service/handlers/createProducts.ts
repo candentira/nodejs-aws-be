@@ -1,11 +1,6 @@
 import 'source-map-support/register'
-import { createProducts } from './services/productsService'
+import { createProduct, isValidProduct } from './services/productsService'
 import { PRODUCT_ERRORS } from './productConsts'
-
-const isValidRequest = ({ title, description, price, count }) => {
-    return title && description && price && count &&
-        typeof price === 'number' && typeof title === 'string' && typeof description === 'string'
-}
 
 export default async event => {
   console.log("createProducts Lambda started execution");
@@ -15,7 +10,7 @@ export default async event => {
   const responseHeaders = { headers: { 'Access-Control-Allow-Origin': '*' } };
   try {
     const { title, description, price, count } = JSON.parse(event.body);
-    if(!event.body || !isValidRequest({ title, description, price, count })) {
+    if(!event.body || !isValidProduct({ title, description, price, count })) {
         console.info("createProducts Lambda didn't create product: wrong data provided");
 
         return {
@@ -25,7 +20,7 @@ export default async event => {
         }
     }
 
-    const newProduct = await createProducts({ title, description, price, count });
+    const newProduct = await createProduct({ title, description, price, count });
     
     console.info("createProducts Lambda finished execution successfully");
 
