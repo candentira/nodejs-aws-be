@@ -12,6 +12,7 @@ custom:
 # Add the serverless-webpack plugin
 plugins:
   - serverless-webpack
+  - serverless-pseudo-parameters
 
 provider:
   name: aws
@@ -68,7 +69,14 @@ functions:
           request:
             parameters:
               paths:
-                name: true
+                name: true          
+          authorizer:
+            name: basicAuthorizer
+            arn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-${self:provider.stage}-basicAuthorizer"
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          
   importFileParser:
     handler: handler.importFileParser
     events:
