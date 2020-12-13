@@ -1,15 +1,15 @@
 const express = require('express')
 require('dotenv').config()
 const axios = require('axios').default
+var cache = require('memory-cache');
 
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World222!')
-// })
+const CACHE_EXPIRATION = 120000
+const REQUESTS_TO_BE_CACHED = ['products']
 
 app.all('/*', (req, res) => {
     console.log(req.originalUrl, 'original URL')
@@ -18,6 +18,16 @@ app.all('/*', (req, res) => {
 
     const recipient = req.originalUrl.split('/')[1]
     console.log(recipient, 'recipient')
+
+    const isRequestedCached = REQUESTS_TO_BE_CACHED.includes(recipient)
+    if (isRequestedCached) {
+        const cached = cache.get(recipient)
+        if(cached) {
+            console.log(cached, 'cached value was used')
+            res.json(cached)
+            return
+        }
+    }
 
     const recipientURL = process.env[recipient]
     console.log(recipientURL, 'recipient URL')
@@ -34,6 +44,9 @@ app.all('/*', (req, res) => {
             .then((response) => {
                 console.log(response.data, 'response from recipient');
                 res.json(response.data);
+                if (isRequestedCached) {
+                    cache.put(recipient, response.data, CACHE_EXPIRATION)
+                }
             })
             .catch((error) => {
                 console.log('recipient error: ', JSON.stringify(error));
